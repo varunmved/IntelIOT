@@ -1,37 +1,34 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
-    <meta charset='utf-8'>
+    <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <link href='https://fonts.googleapis.com/css?family=Chivo:900' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+    <title>Intel IOT &quot;Medipal&quot; Health-Kit by varunmved</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
-    <title>Inteliot by varunmved</title>
   </head>
-
   <body>
-    <div id="container">
-      <div class="inner">
+    <div class="wrapper">
+      <header>
+        <h1>Intel IOT &quot;Medipal&quot; Health-Kit</h1>
+        <p></p>
 
-        <header>
-          <h1>Inteliot</h1>
-          <h2>Intel IOT Temperature </h2>
-        </header>
+        <p class="view"><a href="https://github.com/varunmved/IntelIOT">View the Project on GitHub <small>varunmved/IntelIOT</small></a></p>
 
-        <section id="downloads" class="clearfix">
-          <a href="https://github.com/varunmved/IntelIOT/zipball/master" id="download-zip" class="button"><span>Download .zip</span></a>
-          <a href="https://github.com/varunmved/IntelIOT/tarball/master" id="download-tar-gz" class="button"><span>Download .tar.gz</span></a>
-          <a href="https://github.com/varunmved/IntelIOT" id="view-on-github" class="button"><span>View on GitHub</span></a>
-        </section>
 
-        <hr>
-
-        <section id="main_content">
-          <h3>
+        <ul>
+          <li><a href="https://github.com/varunmved/IntelIOT/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/varunmved/IntelIOT/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/varunmved/IntelIOT">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h3>
 <a id="intel-iot-health-kit-thermometer-the-medipal" class="anchor" href="#intel-iot-health-kit-thermometer-the-medipal" aria-hidden="true"><span class="octicon octicon-link"></span></a>Intel IOT Health-Kit Thermometer (The Medipal)</h3>
 
 <p>I first want to start out by warning you, the reader, that this battle station isn't fully operational. My team "Medipal" has been frantically trying to get everything together by our presentation. We're a team of four students and between geographical problems and having no idea what we were doing at times, we've tried our best to put out something to show off.</p>
@@ -57,36 +54,260 @@ Simply type in the text below, it's important you add the -generator portion, be
 <pre><code>npm install -g express-generator
 </code></pre>
 
-<p>*Next, get libmraa installed on your board. <a href="https://github.com/intel-iot-devkit/mraa">Libmraa</a> is what binds the c/c++ libraries to javascript code allowing us to interface with the IO on the board. We'll need this to use our grove-sensors in order to get the temperature. The link has the following instructions as well</p>
+<ul>
+<li>Next, get libmraa installed on your board. <a href="https://github.com/intel-iot-devkit/mraa">Libmraa</a> is what binds the c/c++ libraries to javascript code allowing us to interface with the IO on the board. We'll need this to use our grove-sensors in order to get the temperature. The link has the following instructions as well</li>
+</ul>
 
 <pre><code>echo "src mraa-upm http://iotdk.intel.com/repos/1.1/intelgalactic" &gt; /etc/opkg/mraa-upm.conf
 opkg update
 opkg install libmraa0
 </code></pre>
 
+<ul>
+<li>Lastly, you'll need <a href="http://socket.io/download/">socket.io</a> which is what intel's example uses as well.Socket.io "Socket.IO enables real-time bidirectional event-based communication.It works on every platform, browser or device, focusing equally on reliability and speed." </li>
+</ul>
+
 <h3>
 <a id="lets-write-some-code" class="anchor" href="#lets-write-some-code" aria-hidden="true"><span class="octicon octicon-link"></span></a>Let's write some code</h3>
 
-<p>A</p>
+<ul>
+<li>Now that we have everything up and running, let's understand how to program the board.A lot of this code will be similar from both Jason's tutorial and the one on the Intel page I linked above.</li>
+</ul>
+
+<pre><code>mkdir Tempearture
+cd EmployeeDB
+express -c stylus
+npm install -d
+
+</code></pre>
+
+<ul>
+<li>Then cd into the TemperatureDB and look at the package.json and edit it so it looks like this</li>
+</ul>
+
+<pre><code>{
+  "name": "application-name",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node app"
+  },
+  "dependencies": {
+    "express": "3.1.0",
+    "mongodb": "&gt;= 0.9.6-7",
+    "socket.io":"latest"
+   }
+}
+
+</code></pre>
+
+<ul>
+<li>Now if we type in the following it will set up the mongoDB client</li>
+</ul>
+
+<pre><code>npm install -d
+
+</code></pre>
+
+<ul>
+<li>Let's create the javascript file which will talk to MongoDB.Save this as temperatureprovider.js</li>
+</ul>
+
+<pre><code>var Db = require('mongodb').Db;
+var Connection = require('mongodb').Connection;
+var Server = require('mongodb').Server;
+var BSON = require('mongodb').BSON;
+var ObjectID = require('mongodb').ObjectID;
+
+TemperatureProvider = function(host, port) {
+  this.db= new Db('node-mongo-Temperature', new Server(host, port, {safe: false}, {auto_reconnect: true}, {}));
+  this.db.open(function(){});
+};
+
+
+TemperatureProvider.prototype.getCollection= function(callback) {
+  this.db.collection('Temperatures', function(error, Temperature_collection) {
+    if( error ) callback(error);
+    else callback(null, Temperature_collection);
+  });
+};
+
+//find all Temperatures
+TemperatureProvider.prototype.findAll = function(callback) {
+    this.getCollection(function(error, Temperature_collection) {
+      if( error ) callback(error)
+      else {
+        Temperature_collection.find().toArray(function(error, results) {
+          if( error ) callback(error)
+          else callback(null, results)
+        });
+      }
+    });
+};
+
+//save new Temperature
+TemperatureProvider.prototype.save = function(Temperatures, callback) {
+    this.getCollection(function(error, Temperature_collection) {
+      if( error ) callback(error)
+      else {
+        if( typeof(Temperatures.length)=="undefined")
+          Temperatures = [Temperatures];
+
+        for( var i =0;i&lt; Temperatures.length;i++ ) {
+          Temperature = Temperatures[i];
+          Temperature.created_at = new Date();
+        }
+
+        Temperature_collection.insert(Temperatures, function() {
+          callback(null, Temperatures);
+        });
+      }
+    });
+};
+
+exports.TemperatureProvider = TemperatureProvider;
+</code></pre>
+
+<ul>
+<li>Let's write the app.js. When writing this, we incorporated the socket.io connections in the previous examples. Using this in conjunction with temperatureprovider.js </li>
+</ul>
+
+<pre><code>/**
+ * Module dependencies.
+ */
+var B = 3975;
+var mraa = require("mraa");
+
+//GROVE Kit A0 Connector --&gt; Aio(0)
+var myAnalogPin = new mraa.Aio(0);
+
+/*
+Function: startSensorWatch(socket)
+Parameters: socket - client communication channel
+Description: Read Temperature Sensor and send temperature in degrees of Fahrenheit every 4 seconds
+*/
+function startSensorWatch(socket) {
+    'use strict';
+    setInterval(function () {
+        var a = myAnalogPin.read();
+        console.log("Analog Pin (A0) Output: " + a);
+        //console.log("Checking....");
+
+        var resistance = (1023 - a) * 10000 / a; //get the resistance of the sensor;
+        //console.log("Resistance: "+resistance);
+        var celsius_temperature = 1 / (Math.log(resistance / 10000) / B + 1 / 298.15) - 273.15;//convert to temperature via datasheet ;
+        //console.log("Celsius Temperature "+celsius_temperature); 
+        var fahrenheit_temperature = (celsius_temperature * (9 / 5)) + 32;
+        console.log("Fahrenheit Temperature: " + fahrenheit_temperature);
+        socket.emit("message", fahrenheit_temperature);
+    }, 4000);
+}
+
+console.log("Sample Reading Grove Kit Temperature Sensor");
+
+//Create Socket.io server
+var http = require('http');
+var app = http.createServer(function (req, res) {
+    'use strict';
+    res.writeHead(200, {'Content-Type': 'text/plain'});
+    res.end('&lt;h1&gt;Hello world from Intel IoT platform!&lt;/h1&gt;');
+}).listen(1337);
+var io = require('socket.io')(app);
+
+//Attach a 'connection' event handler to the server
+io.on('connection', function (socket) {
+    'use strict';
+    console.log('a user connected');
+    //Emits an event along with a message
+    socket.emit('connected', 'Welcome');
+
+    //Start watching Sensors connected to Galileo board
+    startSensorWatch(socket);
+
+    //Attach a 'disconnect' event handler to the socket
+    socket.on('disconnect', function () {
+        console.log('user disconnected');
+    });
+});
+
+
+var express = require('express')
+  , routes = require('./routes')
+  , user = require('./routes/user')
+  , http = require('http')
+  , path = require('path')
+  , TemperatureProvider = require('./temperatureprovider').TemperatureProvider;
+
+var app = express();
+
+app.configure(function(){
+  app.set('port', process.env.PORT || 3000);
+  app.set('views', __dirname + '/views');
+  app.set('view engine', 'jade');
+  app.set('view options', {layout: false});
+  app.use(express.favicon());
+  app.use(express.logger('dev'));
+  app.use(express.bodyParser());
+  app.use(express.methodOverride());
+  app.use(app.router);
+  app.use(require('stylus').middleware(__dirname + '/public'));
+  app.use(express.static(path.join(__dirname, 'public')));
+});
+
+app.configure('development', function(){
+  app.use(express.errorHandler());
+});
+
+var temperatureProvider= new TemperatureProvider('localhost', 27017);
+
+//Routes
+
+app.get('/', function(req, res){
+  temperatureProvider.findAll(function(error, emps){
+      res.render('index', {
+            title: 'Temperatures',
+            temperatures:emps
+        });
+  });
+});
+
+app.get('/temperature/new', function(req, res) {
+    res.render('temperature_new', {
+        title: 'New Temperature'
+    });
+});
+
+//save new temperature
+app.post('/temperature/new', function(req, res){
+    temperatureProvider.save({
+        title: req.param('title'),
+        name: req.param('name')
+    }, function( error, docs) {
+        res.redirect('/')
+    });
+});
+
+
+
+app.listen(3000);
+</code></pre>
 
 <h3>
-<a id="authors-and-contributors" class="anchor" href="#authors-and-contributors" aria-hidden="true"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
+<a id="the-future" class="anchor" href="#the-future" aria-hidden="true"><span class="octicon octicon-link"></span></a>The future</h3>
 
-<p>You can <a href="https://github.com/blog/821" class="user-mention">@mention</a> a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor's GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
+<p>We hope to write some kind of front-end for our board, integrating it with google maps api. The idea is to show a temperature and a location with a color coordinated icon revealing the heat.</p>
 
 <h3>
 <a id="contact" class="anchor" href="#contact" aria-hidden="true"><span class="octicon octicon-link"></span></a>Contact</h3>
 
 <p>Feel free to tweet me at <a href="https://twitter.com/vved123">@vved123</a> if you have any questions about anything on the page here.</p>
-        </section>
-
-        <footer>
-          Inteliot is maintained by <a href="https://github.com/varunmved">varunmved</a><br>
-          This page was generated by <a href="http://pages.github.com">GitHub Pages</a>. Tactile theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.
-        </footer>
-
-        
-      </div>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/varunmved">varunmved</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
     </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
   </body>
 </html>
