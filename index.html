@@ -1,34 +1,34 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8">
+    <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Intel IOT &quot;Medipal&quot; Health-Kit by varunmved</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
 
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
+
+    <title>Intel IOT &quot;Medipal&quot; Health-Kit by varunmved</title>
   </head>
+
   <body>
-    <div class="wrapper">
-      <header>
+    <header>
+      <div class="inner">
         <h1>Intel IOT &quot;Medipal&quot; Health-Kit</h1>
-        <p></p>
+        <h2></h2>
+        <a href="https://github.com/varunmved/IntelIOT" class="button"><small>View project on</small> GitHub</a>
+      </div>
+    </header>
 
-        <p class="view"><a href="https://github.com/varunmved/IntelIOT">View the Project on GitHub <small>varunmved/IntelIOT</small></a></p>
-
-
-        <ul>
-          <li><a href="https://github.com/varunmved/IntelIOT/zipball/master">Download <strong>ZIP File</strong></a></li>
-          <li><a href="https://github.com/varunmved/IntelIOT/tarball/master">Download <strong>TAR Ball</strong></a></li>
-          <li><a href="https://github.com/varunmved/IntelIOT">View On <strong>GitHub</strong></a></li>
-        </ul>
-      </header>
-      <section>
-        <h3>
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h3>
 <a id="intel-iot-health-kit-thermometer-the-medipal" class="anchor" href="#intel-iot-health-kit-thermometer-the-medipal" aria-hidden="true"><span class="octicon octicon-link"></span></a>Intel IOT Health-Kit Thermometer (The Medipal)</h3>
 
 <p>I first want to start out by warning you, the reader, that this battle station isn't fully operational. My team "Medipal" has been frantically trying to get everything together by our presentation. We're a team of four students and between geographical problems and having no idea what we were doing at times, we've tried our best to put out something to show off.</p>
@@ -64,6 +64,14 @@ opkg install libmraa0
 </code></pre>
 
 <ul>
+<li>Now let's integrate geolocation. We'll do this by using <a href="https://www.npmjs.com/package/geoip-lite">geoip-light</a> Run the following commands to install it via npm, and to get the data files. If it doesn't work, you can add -g to make it global</li>
+</ul>
+
+<pre><code>npm install geoip-lite
+npm run-script udpatedb
+</code></pre>
+
+<ul>
 <li>Lastly, you'll need <a href="http://socket.io/download/">socket.io</a> which is what intel's example uses as well.Socket.io "Socket.IO enables real-time bidirectional event-based communication.It works on every platform, browser or device, focusing equally on reliability and speed." </li>
 </ul>
 
@@ -96,6 +104,7 @@ npm install -d
     "express": "3.1.0",
     "mongodb": "&gt;= 0.9.6-7",
     "socket.io":"latest"
+    "node-geoip":"latest"
    }
 }
 
@@ -200,7 +209,8 @@ function startSensorWatch(socket) {
         var fahrenheit_temperature = (celsius_temperature * (9 / 5)) + 32;
         console.log("Fahrenheit Temperature: " + fahrenheit_temperature);
         socket.emit("message", fahrenheit_temperature);
-    }, 4000);
+
+    }, 3000);
 }
 
 console.log("Sample Reading Grove Kit Temperature Sensor");
@@ -213,6 +223,7 @@ var app = http.createServer(function (req, res) {
     res.end('&lt;h1&gt;Hello world from Intel IoT platform!&lt;/h1&gt;');
 }).listen(1337);
 var io = require('socket.io')(app);
+
 
 //Attach a 'connection' event handler to the server
 io.on('connection', function (socket) {
@@ -227,6 +238,7 @@ io.on('connection', function (socket) {
     //Attach a 'disconnect' event handler to the socket
     socket.on('disconnect', function () {
         console.log('user disconnected');
+
     });
 });
 
@@ -287,6 +299,15 @@ app.post('/temperature/new', function(req, res){
     });
 });
 
+//save geolocation
+app.post('/location/new', function(req,rest){
+  temperatureProvider.save({
+    title:req.param('title'),
+    name: req.param('name')
+    }, function(error,docs)
+  })
+}
+
 
 
 app.listen(3000);
@@ -301,13 +322,25 @@ app.listen(3000);
 <a id="contact" class="anchor" href="#contact" aria-hidden="true"><span class="octicon octicon-link"></span></a>Contact</h3>
 
 <p>Feel free to tweet me at <a href="https://twitter.com/vved123">@vved123</a> if you have any questions about anything on the page here.</p>
-      </section>
-      <footer>
-        <p>This project is maintained by <a href="https://github.com/varunmved">varunmved</a></p>
-        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
-      </footer>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/varunmved/IntelIOT/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/varunmved/IntelIOT/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/varunmved/IntelIOT"></a> is maintained by <a href="https://github.com/varunmved">varunmved</a>.</p>
+
+          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
     </div>
-    <script src="javascripts/scale.fix.js"></script>
-    
+
+  
   </body>
 </html>
